@@ -518,6 +518,7 @@ system.runInterval(() => {
             for (const playerId of session.allRecordedPlayerIds) {
                 const joinData = session.trackedPlayerJoinTicks.get(playerId);
                 if (!joinData) continue; // skip if missing
+                const name = joinData.name;
                 const joinTick = joinData.joinTick;
                 const pos = replayPositionDataMap.get(playerId);
                 const rot = replayRotationDataMap.get(playerId);
@@ -531,7 +532,11 @@ system.runInterval(() => {
                     if (config.debugEntityPlayback === true) {
                         debugWarn(`[ReplayCraft] Replay entity for ${playerId} missing or invalid, respawning...`);
                     }
-                    summonReplayEntity(session, session.replayController, playerId); // respawn using existing session
+                    if (name != null) {
+                        summonReplayEntity(session, session.replayController, playerId, name);
+                    } else {
+                        summonReplayEntity(session, session.replayController, playerId);
+                    }
                     entity = replayEntityDataMap.get(playerId)?.customEntity;
 
                     if (!entity) {
