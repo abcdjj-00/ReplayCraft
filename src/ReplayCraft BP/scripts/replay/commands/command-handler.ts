@@ -16,7 +16,8 @@ import { dbClearAllCmd } from "./admin commands/wipe-database";
 import { loadSecondsCmd } from "./player commands/load-seconds-cmd";
 import { flyCmd } from "./player commands/fly-cmd";
 import { environmentCmd } from "./player commands/enviroment-cmd";
-import { entityRecordingCmd, multiplayerRecordingCmd } from "./player commands/entity-recording-cmd";
+import { entityRecordingCmd } from "./player commands/entity-recording-cmd";
+import { multiplayerRecordingCmd } from "./player commands/multiplayer-recording-cmd";
 function init(event: StartupEvent) {
     /*
      * Commands that have a Level set to Any means everyone can run this command, these are things accessible to all players.
