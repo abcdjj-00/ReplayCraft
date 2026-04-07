@@ -11,9 +11,8 @@ export function entityRecordingCmd(_origin: CustomCommandOrigin, result: boolean
         let settings: PlayerSettings | undefined = replayCraftPlayerSettingsDB.get(sender.id);
 
         if (!settings) {
-            settings = {
-                entityRecording: false,
-            };
+            sender.sendMessage("§c[ReplayCraft] Error: No settings found for you. This should never happen. Please report this to the developer.");
+            return;
         }
 
         settings.entityRecording = result;
