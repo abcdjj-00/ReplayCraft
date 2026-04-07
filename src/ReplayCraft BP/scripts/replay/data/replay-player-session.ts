@@ -125,6 +125,7 @@ export interface PlayerReplaySession {
             states: Record<string, boolean | number | string>;
         }
     >;
+    entityRecordingEnabled: boolean;
 }
 
 export let replaySessions = {

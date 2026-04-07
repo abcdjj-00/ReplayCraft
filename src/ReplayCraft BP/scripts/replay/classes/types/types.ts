@@ -118,6 +118,9 @@ export interface BuildOption {
     display: string;
     isValid: boolean;
 }
+export interface PlayerSettings {
+    entityRecording: boolean;
+}
 
 // Define the structure of parsed replay data
 export interface ReplayDataV3 {

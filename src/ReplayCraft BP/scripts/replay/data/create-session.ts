@@ -1,8 +1,9 @@
 import { ReplayStateMachine } from "../classes/replay-state-machine";
 import { PlayerReplaySession } from "./replay-player-session";
-import { replayCraftActiveSessionsDB } from "../classes/subscriptions/world-initialize";
+import { replayCraftActiveSessionsDB, replayCraftPlayerSettingsDB } from "../classes/subscriptions/world-initialize";
 
 export function createPlayerSession(_playerId: string): PlayerReplaySession {
+    const playerSettings = replayCraftPlayerSettingsDB.get(_playerId);
     const session = {
         playerName: "",
         soundIds: [
@@ -267,7 +268,9 @@ export function createPlayerSession(_playerId: string): PlayerReplaySession {
             compactMode: true,
             elementToUse: 0,
         },
+        entityRecordingEnabled: playerSettings.entityRecording ?? true,
     } as PlayerReplaySession;
+
     // Add the session to the active sessions database?
     replayCraftActiveSessionsDB.set(_playerId, session);
     // Now instantiate replayStateMachine passing the session itself

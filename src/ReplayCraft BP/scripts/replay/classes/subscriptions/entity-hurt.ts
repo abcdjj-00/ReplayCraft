@@ -46,6 +46,9 @@ function onEntityHit(event: EntityHurtAfterEvent) {
         const attacker = damageSource.damagingEntity;
         const victim = hurtEntity;
         let victimSession = replaySessions.playerSessions.get(victim.id);
+        if (!victimSession) {
+            return;
+        }
         const tick = victimSession.recordingEndTick;
         const damageData: PlayerDamageData = {
             playerID: attacker.id,

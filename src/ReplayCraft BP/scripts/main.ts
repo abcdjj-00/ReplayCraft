@@ -33,17 +33,11 @@ import { assignEntityComponents } from "./replay/entity/variant-trigger";
 import { replayCraftItemReleaseAfterEvent } from "./replay/classes/subscriptions/item-release-use";
 import { replayCraftItemStartAfterEvent } from "./replay/classes/subscriptions/item-start-use";
 import { replayCraftItemCompleteUseAfterEvent } from "./replay/classes/subscriptions/item-complete-use";
-import { replayCraftItemStopUseAfterEvent } from "./replay/classes/subscriptions/item-stop-use";
 import { playItemAnimation } from "./replay/items/item-animation-playback";
 import { getReplayEntityId } from "./replay/items/lookup-custom-items";
 import { doSave } from "./replay/functions/replayControls/save-replay-recording";
 import { doSaveReset } from "./replay/functions/replayControls/load-progress-and-reset";
 import { getSeatIndex, tryResolveMount, tryResolvePlayerMount } from "./replay/entity/mount";
-
-/**
- * beforeChatSend(); - we have migrated to the new custom slash commands within the bedrock API.
- */
-
 //Events
 replaycraftBreakBlockAfterEvent();
 replaycraftBreakBlockBeforeEvent();
@@ -58,7 +52,6 @@ replaycraftItemUseAfterEvent();
 replayCraftItemReleaseAfterEvent();
 replayCraftItemStartAfterEvent();
 replayCraftItemCompleteUseAfterEvent();
-replayCraftItemStopUseAfterEvent();
 //Show the player a useful message for the first time they join!
 onPlayerSpawn();
 //Handle player leaving the game
@@ -129,6 +122,7 @@ system.runInterval(() => {
             cameraFocusPlayer,
             cameraAffectedPlayers,
             topDownCamHight,
+            entityRecordingEnabled,
         } = session;
 
         const state = replayStateMachine.state;
@@ -386,7 +380,7 @@ system.runInterval(() => {
         }
 
         // --- Ambient Entity Recording ---
-        if (isRecording) {
+        if (isRecording && entityRecordingEnabled === true) {
             trackedPlayers.forEach((player) => {
                 const dimension = world.getDimension(player.dimension.id);
                 const nearbyEntities = dimension.getEntities({
