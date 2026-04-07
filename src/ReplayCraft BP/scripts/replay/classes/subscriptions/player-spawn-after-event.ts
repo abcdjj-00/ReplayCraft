@@ -1,5 +1,7 @@
 import { PlayerSpawnAfterEvent, system, world } from "@minecraft/server";
 import { disableFlight } from "../../functions/player/survival";
+import { replayCraftPlayerSettingsDB } from "./world-initialize";
+import { setDefaultPlayerSettings } from "../../functions/database/default-player-settings";
 /**
  * Function to execute when a player spawns.
  * Initializes event handlers for player spawn events.
@@ -24,6 +26,11 @@ function initializeEventHandlers() {
 function handlePlayerSpawn(event: PlayerSpawnAfterEvent) {
     if (event.initialSpawn) {
         triggerMessage(event);
+        const player = event.player;
+        const settings = replayCraftPlayerSettingsDB.get(player.id);
+        if (!settings) {
+            setDefaultPlayerSettings(player.id);
+        }
     }
     /**
  Trigger a message to the player after they spawn.
