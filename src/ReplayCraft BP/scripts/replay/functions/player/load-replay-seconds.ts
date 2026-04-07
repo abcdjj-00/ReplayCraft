@@ -2,8 +2,9 @@ import { Player } from "@minecraft/server";
 import { PlayerReplaySession } from "../../data/replay-player-session";
 import { removeEntities } from "../remove-entities";
 import { clearStructure } from "../clear-structure";
-import { loadEntity } from "../load-entity";
+//import { loadEntity } from "../load-entity";
 import { loadBlocksUpToTick } from "../load-blocks-upto-tick";
+import { summonReplayEntity } from "../summon-replay-entity";
 
 /**
  * Loads the replay state up to a given timestamp (in seconds).
@@ -46,18 +47,36 @@ export async function loadReplaySeconds(player: Player, session: PlayerReplaySes
     // Clear entities and structures, then reload blocks and entities up to targetTick
     removeEntities(player, true);
 
-    await Promise.all(
+    /*await Promise.all(
         session.trackedPlayers.map(async (p) => {
             await clearStructure(p, session);
         })
     );
-
+*/
+    // Clear structures for all tracked players
+    for (const p of session.trackedPlayers) {
+        await clearStructure(p, session);
+    }
+    /*
     await Promise.all(
         session.trackedPlayers.map(async (p) => {
             await loadEntity(p);
             await loadBlocksUpToTick(targetTick, p);
         })
     );
+*/
+    // Spawn multiplayer entities and load blocks for them
+    for (const playerId of session.allRecordedPlayerIds) {
+        const joinData = session.trackedPlayerJoinTicks.get(playerId);
+        if (!joinData) continue;
+
+        const joinTick = joinData.joinTick;
+
+        if (session.targetFrameTick >= joinTick && session.targetFrameTick <= session.recordingEndTick) {
+            summonReplayEntity(session, player, playerId, joinData.name);
+        }
+        await loadBlocksUpToTick(targetTick, player, playerId);
+    }
 
     player.sendMessage("§4[ReplayCraft]§a Frame loaded successfully.");
 }

@@ -2,9 +2,9 @@ import { replaySessions } from "../data/replay-player-session";
 import * as ui from "@minecraft/server-ui";
 import { Player } from "@minecraft/server";
 import { clearStructure } from "../functions/clear-structure";
-import { loadEntity } from "../functions/load-entity";
 import { loadBlocksUpToTick } from "../functions/load-blocks-upto-tick";
 import { removeEntities } from "../functions/remove-entities";
+import { summonReplayEntity } from "../functions/summon-replay-entity";
 
 export function loadFrameSecondsForm(player: Player) {
     const session = replaySessions.playerSessions.get(player.id);
@@ -52,17 +52,19 @@ export function loadFrameSecondsForm(player: Player) {
 
         removeEntities(player, true);
 
-        await Promise.all(
-            session.trackedPlayers.map(async (p) => {
-                await clearStructure(p, session);
-            })
-        );
+        for (const p of session.trackedPlayers) {
+            await clearStructure(p, session);
+        }
+        for (const playerId of session.allRecordedPlayerIds) {
+            const joinData = session.trackedPlayerJoinTicks.get(playerId);
+            if (!joinData) continue;
 
-        await Promise.all(
-            session.trackedPlayers.map(async (p) => {
-                await loadEntity(p);
-                await loadBlocksUpToTick(session.targetFrameTick, p);
-            })
-        );
+            const joinTick = joinData.joinTick;
+
+            if (session.targetFrameTick >= joinTick && session.targetFrameTick <= session.recordingEndTick) {
+                summonReplayEntity(session, player, playerId, joinData.name);
+            }
+            await loadBlocksUpToTick(session.targetFrameTick, player, playerId);
+        }
     });
 }

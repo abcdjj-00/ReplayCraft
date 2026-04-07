@@ -17,31 +17,31 @@ type BlockData = {
     otherPart?: { location: Vector3; typeId: string; states: BlockState };
 };
 
-export async function loadBlocksUpToTick(targetTick: number, player: Player): Promise<void> {
-    const session = replaySessions.playerSessions.get(player.id);
+export async function loadBlocksUpToTick(targetTick: number, controller: Player, playerId?: string): Promise<void> {
+    const session = replaySessions.playerSessions.get(controller.id);
     if (!session) {
-        debugWarn(`No replay session found for player ${player.name}`);
+        debugWarn(`No replay session found for player ${controller.name}`);
         return;
     }
 
-    const playerData: PlayerBlockData | undefined = session.replayBlockStateMap.get(player.id);
+    const playerData: PlayerBlockData | undefined = session.replayBlockStateMap.get(playerId);
     if (!playerData) {
-        debugWarn(`No block replay data for player ${player.name}`);
+        debugWarn(`No block replay data for player ${playerId}`);
         return;
     }
 
-    const blockBreaks: PlayerBlockInteractionData | undefined = session.replayBlockInteractionAfterMap.get(player.id);
+    const blockBreaks: PlayerBlockInteractionData | undefined = session.replayBlockInteractionAfterMap.get(playerId);
 
     async function setBlock(location: Vector3, typeId: string, states: BlockState): Promise<void> {
-        if (!isChunkLoaded(location, player)) {
+        if (!isChunkLoaded(location, controller)) {
             debugWarn(`Chunk not loaded for block at ${location.x}, ${location.y}, ${location.z}. Teleporting player...`);
 
-            const success = player.tryTeleport({ x: location.x, y: location.y + 2, z: location.z }, { checkForBlocks: false });
+            const success = controller.tryTeleport({ x: location.x, y: location.y + 2, z: location.z }, { checkForBlocks: false });
 
             if (success) {
-                await waitForChunkLoad(location, player);
+                await waitForChunkLoad(location, controller);
             } else {
-                debugError(`Failed to teleport ${player.name} to load chunk at ${location.x}, ${location.y}, ${location.z}`);
+                debugError(`Failed to teleport ${controller.name} to load chunk at ${location.x}, ${location.y}, ${location.z}`);
                 return;
             }
         }
