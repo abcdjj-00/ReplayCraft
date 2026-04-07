@@ -123,6 +123,7 @@ system.runInterval(() => {
             cameraAffectedPlayers,
             topDownCamHight,
             entityRecordingEnabled,
+            multiplayerRecording,
         } = session;
 
         const state = replayStateMachine.state;
@@ -266,7 +267,7 @@ system.runInterval(() => {
         }
 
         // --- Multiplayer Player Tracking ---
-        if (isRecording) {
+        if (isRecording && multiplayerRecording === true) {
             updateTrackedPlayers();
         }
 

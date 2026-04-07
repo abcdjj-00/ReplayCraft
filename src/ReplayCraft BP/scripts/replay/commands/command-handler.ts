@@ -16,7 +16,7 @@ import { dbClearAllCmd } from "./admin commands/wipe-database";
 import { loadSecondsCmd } from "./player commands/load-seconds-cmd";
 import { flyCmd } from "./player commands/fly-cmd";
 import { environmentCmd } from "./player commands/enviroment-cmd";
-import { entityRecordingCmd } from "./player commands/entity-recording-cmd";
+import { entityRecordingCmd, multiplayerRecordingCmd } from "./player commands/entity-recording-cmd";
 function init(event: StartupEvent) {
     /*
      * Commands that have a Level set to Any means everyone can run this command, these are things accessible to all players.
@@ -67,6 +67,12 @@ function init(event: StartupEvent) {
     const replaycraftEntityRecordingCommand: CustomCommand = {
         name: "rc:entityrecording",
         description: "Toggles entity recording mode.",
+        mandatoryParameters: [{ type: CustomCommandParamType.Boolean, name: "Enable" }],
+        permissionLevel: CommandPermissionLevel.Any,
+    };
+    const replaycraftMultiplayerRecordingCommand: CustomCommand = {
+        name: "rc:multiplayerrecording",
+        description: "Toggles multiplayer recording mode.",
         mandatoryParameters: [{ type: CustomCommandParamType.Boolean, name: "Enable" }],
         permissionLevel: CommandPermissionLevel.Any,
     };
@@ -149,6 +155,7 @@ function init(event: StartupEvent) {
     event.customCommandRegistry.registerCommand(replaycraftflightCommand, flyCmd);
     event.customCommandRegistry.registerCommand(replaycraftEnvironmentCommand, environmentCmd);
     event.customCommandRegistry.registerCommand(replaycraftEntityRecordingCommand, entityRecordingCmd);
+    event.customCommandRegistry.registerCommand(replaycraftMultiplayerRecordingCommand, multiplayerRecordingCmd);
     if (config.devChatCommands) {
         event.customCommandRegistry.registerCommand(replaycraftDatabaseUiCommand, debugDatabaseUiCmd);
         event.customCommandRegistry.registerCommand(playAnimationCommand, debugPlayAnimationCmd);

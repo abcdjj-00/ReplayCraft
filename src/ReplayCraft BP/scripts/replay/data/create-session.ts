@@ -269,6 +269,7 @@ export function createPlayerSession(_playerId: string): PlayerReplaySession {
             elementToUse: 0,
         },
         entityRecordingEnabled: playerSettings.entityRecording ?? true,
+        multiplayerRecording: playerSettings.multiplayerRecording ?? true,
     } as PlayerReplaySession;
 
     // Add the session to the active sessions database?

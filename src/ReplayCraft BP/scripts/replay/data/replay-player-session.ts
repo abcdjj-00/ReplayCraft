@@ -126,6 +126,7 @@ export interface PlayerReplaySession {
         }
     >;
     entityRecordingEnabled: boolean;
+    multiplayerRecording: boolean;
 }
 
 export let replaySessions = {

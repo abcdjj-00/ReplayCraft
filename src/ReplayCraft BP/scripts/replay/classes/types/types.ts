@@ -120,6 +120,7 @@ export interface BuildOption {
 }
 export interface PlayerSettings {
     entityRecording: boolean;
+    multiplayerRecording: boolean;
 }
 
 // Define the structure of parsed replay data
